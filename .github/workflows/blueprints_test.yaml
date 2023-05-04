@@ -38,7 +38,7 @@ jobs:
       - name: Run tests
         if: ( steps.check_for_changes.outputs.change_count != '0' || github.event_name == 'schedule' )
         run: |
-          shipyard test ${{ matrix.folder }}
+          jumppad test ${{ matrix.folder }}
       - name: Send status to Discord
         uses: sarisia/actions-status-discord@v1
         if: ( steps.check_for_changes.outputs.change_count != '0' || github.event_name == 'schedule' )
