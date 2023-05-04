@@ -17,7 +17,8 @@ jobs:
     strategy:
       matrix:
         folder: [
-          'modules/kubernetes-vault/'
+          'modules/kubernetes-vault/',
+          'kubernetes-vault/'
         ]
 
     steps:
@@ -30,15 +31,18 @@ jobs:
         id: check_for_changes
         run: |
           echo "::set-output name=change_count::$(git diff --name-only  HEAD^ HEAD | grep '${{ matrix.folder }}' | wc -l)"
+
       - name: Get dependencies
         if: ( steps.check_for_changes.outputs.change_count != '0' || github.event_name == 'schedule' )
         run: |
           echo "changes: ${{ steps.check_for_changes.outputs.change_count }} event: ${{ github.event_name }}"
           curl https://jumppad.dev/install | bash
+
       - name: Run tests
         if: ( steps.check_for_changes.outputs.change_count != '0' || github.event_name == 'schedule' )
         run: |
           jumppad test ${{ matrix.folder }}
+
       - name: Send status to Discord
         uses: sarisia/actions-status-discord@v1
         if: ( steps.check_for_changes.outputs.change_count != '0' || github.event_name == 'schedule' )
