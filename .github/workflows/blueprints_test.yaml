@@ -1,0 +1,56 @@
+---
+
+name: Test Blueprints
+on:
+  push:
+    branches:
+      - "*"
+  schedule:
+    - cron: '0 0 * * *'
+
+jobs:
+  build:
+    name: Test Blueprints
+    runs-on: ubuntu-latest
+    continue-on-error: true
+
+    strategy:
+      matrix:
+        folder: [
+          'modules/kubernetes-vault/'
+        ]
+
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 3
+
+      - name: Check for changes
+        id: check_for_changes
+        run: |
+          echo "::set-output name=change_count::$(git diff --name-only  HEAD^ HEAD | grep '${{ matrix.folder }}' | wc -l)"
+      - name: Get dependencies
+        if: ( steps.check_for_changes.outputs.change_count != '0' || github.event_name == 'schedule' )
+        run: |
+          echo "changes: ${{ steps.check_for_changes.outputs.change_count }} event: ${{ github.event_name }}"
+          curl https://jumppad.dev/install | bash
+      - name: Run tests
+        if: ( steps.check_for_changes.outputs.change_count != '0' || github.event_name == 'schedule' )
+        run: |
+          shipyard test ${{ matrix.folder }}
+      - name: Send status to Discord
+        uses: sarisia/actions-status-discord@v1
+        if: ( steps.check_for_changes.outputs.change_count != '0' || github.event_name == 'schedule' )
+        with:
+          webhook: ${{ secrets.DISCORD_WEBHOOK }}
+          title: ${{ matrix.folder }}
+          description: "Functional tests for ${{ matrix.folder }}"
+
+      - name: Send failure status to Discord
+        uses: sarisia/actions-status-discord@v1
+        if: failure()
+        with:
+          webhook: ${{ secrets.DISCORD_WEBHOOK }}
+          title: ${{ matrix.folder }}
+          description: "Functional tests for ${{ matrix.folder }}"
