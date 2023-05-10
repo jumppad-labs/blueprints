@@ -6,10 +6,10 @@ module "consul" {
   source = "./consul"
 
   variables = {
-    network = resource.network.vpc1.id
+    consul_nodes = 1
+    network      = resource.network.vpc1.id
   }
 }
-
 
 module "nginx" {
   source = "./nginx"
@@ -28,11 +28,14 @@ module "vms" {
 }
 
 module "nomad" {
+  disabled = true
+
   source = "./nomad"
 
   variables = {
     network       = resource.network.vpc1.id
     consul_server = module.consul.output.consul_server
+    client_nodes  = 3
   }
 }
 

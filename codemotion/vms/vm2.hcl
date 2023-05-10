@@ -33,11 +33,11 @@ resource "container" "vm2" {
 resource "template" "consul_config_2" {
   source = <<-EOF
     service {
-      id = "api-vm1"
+      id = "api-vm2"
       name = "api"
       port = 9090
     }
   EOF
 
-  destination = "${data("consul_config")}/service1.hcl"
+  destination = "${data("consul_config")}/service2.hcl"
 }
