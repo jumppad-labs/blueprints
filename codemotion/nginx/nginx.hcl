@@ -87,7 +87,7 @@ resource "container" "nginx" {
     destination = "/etc/nginx/conf.d/load-balancer.conf.ctmpl"
   }
 
-  ## Public SSH
+  ## Public HTTP
   port {
     host   = 80
     local  = 80

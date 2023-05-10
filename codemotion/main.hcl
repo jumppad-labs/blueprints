@@ -2,12 +2,11 @@ resource "network" "vpc1" {
   subnet = "10.5.0.0/16"
 }
 
-module "consul" {
-  source = "./consul"
-
+module "vms" {
+  source = "./vms"
   variables = {
-    consul_nodes = 1
-    network      = resource.network.vpc1.id
+    network       = resource.network.vpc1.id
+    consul_server = module.consul.output.consul_server
   }
 }
 
@@ -16,6 +15,15 @@ module "nginx" {
   variables = {
     network       = resource.network.vpc1.id
     consul_server = module.consul.output.consul_server
+  }
+}
+
+module "consul" {
+  source = "./consul"
+
+  variables = {
+    consul_nodes = 1
+    network      = resource.network.vpc1.id
   }
 }
 
@@ -28,8 +36,6 @@ module "vms" {
 }
 
 module "nomad" {
-  disabled = true
-
   source = "./nomad"
 
   variables = {

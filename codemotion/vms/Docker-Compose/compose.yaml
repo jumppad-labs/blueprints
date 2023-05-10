@@ -1,0 +1,33 @@
+services:
+  vm1:
+    image: nicholasjackson/vm:0.1.0
+
+# but what about ssh
+services:
+  generate_ssh_key:
+    image: ubuntu:latest
+    command: ["ssh-keygen", "-t", "ed25519","-C", "your_email@example.com"]
+    working_directory: "/files"
+    volumes:
+        - ./files:/files
+  vm1:
+    image: nicholasjackson/vm:0.1.0
+
+# and how to add it to the known hosts for the vm?
+services:
+  generate_ssh_key:
+    image: ubuntu:latest
+    command: ["ssh-keygen", "-t", "ed25519","-C", "your_email@example.com"]
+    working_directory: "/files"
+    volumes:
+        - ./:/files
+  add_known_hosts:
+    image: ubuntu:latest
+    command: ["sh", "install_ssh.sh"]
+    working_directory: "/files"
+    volumes:
+        - ./files/:/files
+  vm1:
+    image: nicholasjackson/vm:0.1.0
+    volumes:
+        - ./files/authoized_keys:/root/.ssh/authoized_keys

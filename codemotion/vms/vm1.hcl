@@ -46,19 +46,6 @@ resource "container" "vm1" {
   }
 }
 
-
-resource "template" "consul_config_1" {
-  source = <<-EOF
-    service {
-      id = "api-vm1"
-      name = "api"
-      port = 9090
-    }
-  EOF
-
-  destination = "${data("consul_config")}/service1.hcl"
-}
-
 resource "template" "vm_init" {
   source = <<-EOF
     #! /bin/bash
@@ -79,4 +66,16 @@ resource "remote_exec" "vm_init" {
     "/bin/bash",
     "/init/init.sh"
   ]
+}
+
+resource "template" "consul_config_1" {
+  source = <<-EOF
+    service {
+      id = "api-vm1"
+      name = "api"
+      port = 9090
+    }
+  EOF
+
+  destination = "${data("consul_config")}/service1.hcl"
 }
