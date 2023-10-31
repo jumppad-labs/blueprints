@@ -1,1 +1,1 @@
-# Jumppad blueprints
+# Jumppad examples
