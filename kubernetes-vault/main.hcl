@@ -9,8 +9,8 @@ resource "k8s_cluster" "k3s" {
 }
 
 module "vault" {
-  //source = "github.com/jumppad-labs/examples/modules/kubernetes-vault"
-  source = "../modules/kubernetes-vault"
+  source = "github.com/jumppad-labs/examples?ref=6ce208995de36d85df5357a9762eb3854be2b434/modules/kubernetes-vault"
+  //source = "../modules/kubernetes-vault"
 
   variables = {
     namespace    = "default"
