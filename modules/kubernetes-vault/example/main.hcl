@@ -4,7 +4,7 @@ resource "network" "local" {
 
 resource "k8s_cluster" "k3s" {
   network {
-    id = resource.network.local.id
+    id = resource.network.local.meta.id
   }
 }
 
@@ -12,15 +12,15 @@ module "vault" {
   source = "../"
 
   variables = {
-    namespace      = "default"
-    helm_version   = "0.24.0"
-    api_port       = 8200
-    k8s_cluster_id = resource.k8s_cluster.k3s.id
+    namespace    = "default"
+    helm_version = "0.24.0"
+    api_port     = 8200
+    k8s_cluster  = resource.k8s_cluster.k3s
   }
 }
 
 output "KUBECONFIG" {
-  value = resource.k8s_cluster.k3s.kubeconfig
+  value = resource.k8s_cluster.k3s.kube_config.path
 }
 
 output "VAULT_ADDR" {

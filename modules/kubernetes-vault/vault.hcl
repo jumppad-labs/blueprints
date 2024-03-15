@@ -24,7 +24,7 @@ resource "helm" "vault" {
   // as the user can override the helm values
   depends_on = ["resource.template.helm_values"]
 
-  cluster   = variable.k8s_cluster_id
+  cluster   = variable.k8s_cluster
   namespace = variable.namespace
 
   repository {
@@ -47,8 +47,8 @@ resource "ingress" "vault_http" {
   port = variable.api_port
 
   target {
-    id   = variable.k8s_cluster_id
-    port = 8200
+    resource = variable.k8s_cluster
+    port     = 8200
 
     config = {
       service   = "vault-ui"
@@ -58,7 +58,7 @@ resource "ingress" "vault_http" {
 }
 
 output "vault_addr" {
-  value = resource.ingress.vault_http.address
+  value = "http://${resource.ingress.vault_http.local_address}"
 }
 
 output "vault_token" {

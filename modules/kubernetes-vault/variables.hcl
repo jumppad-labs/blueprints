@@ -28,10 +28,10 @@ variable "api_port" {
 }
 
 
-variable "k8s_cluster_id" {
-  default      = ""
+variable "k8s_cluster" {
+  default     = ""
   description = <<EOF
-    ID of the Kuberentes cluster to use to install Vault. This value should
-    be the `id` of a `k8s_cluster` resource. i.e. `resource.k8s_cluster.dev.id`.
+    Kuberentes cluster to use to install Vault. This value should
+    be the `k8s_cluster` resource. i.e. `resource.k8s_cluster.dev`.
   EOF
 }
